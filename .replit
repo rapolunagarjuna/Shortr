@@ -1,0 +1,10 @@
+run = "go run ."
+[nix]
+channel = "stable-24_05"
+
+[deployment]
+run = ["sh", "-c", "go run ."]
+
+[[ports]]
+localPort = 8080
+externalPort = 80
