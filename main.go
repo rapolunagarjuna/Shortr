@@ -1,21 +1,38 @@
 package main
 
-import "fmt"
-import "net/http"
+import (
+	"html/template"
+
+	"github.com/gin-gonic/gin"
+	"github.com/rapolunagarjuna/Shortr/handlers"
+)
 
 func main() {
-  fmt.Println("Hello World")
-  http.HandleFunc("/", handleHomeRoute)
+	r := gin.Default()
 
-  http.ListenAndServe(":8080", nil)
-}
+	urls := make(map[string]string)
+	sHandler := handlers.ShortenHandler{Urls: urls}
 
-func handleHomeRoute(w http.ResponseWriter, request *http.Request) {
-  if request.Method == "GET" {
-    fmt.Fprintf(w, "Hello World")
-  } else if request.Method == "POST" {
-    fmt.Fprintf(w, "Hello World")
-  } else {
-    w.WriteHeader(405)
-  }
+	r.GET("/", func(c *gin.Context) {
+		temp := template.Must(template.ParseFiles("templates/HomePage.html"))
+		temp.Execute(c.Writer, nil)
+	})
+
+	r.GET("/login", func(c *gin.Context) {
+		temp := template.Must(template.ParseFiles("templates/LoginPage.html"))
+		temp.Execute(c.Writer, nil)
+	})
+
+	r.GET("/profile", func(c *gin.Context) {
+		temp := template.Must(template.ParseFiles("templates/ProfilePage.html"))
+		temp.Execute(c.Writer, nil)
+	})
+
+	r.GET("/ping", handlers.PingHandler)
+
+	r.POST("/shorten", sHandler.AddNewLink)
+	r.GET("/:alias", sHandler.Redirect)
+	r.GET("/qrcode", handlers.QRCodeHandler)
+
+	r.Run()
 }

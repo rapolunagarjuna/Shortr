@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home Page</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        
+    </head>
+    
+    <body class="w-full min-h-screen flex flex-col justify-center p-5">
+        <!-- profile -->
+        <a href="/login" class="ml-auto bg-blue-500 hover:bg-blue-900 shadow-xl px-7 py-3 text-white w-fit" >Login</a>
+        <div class="flex flex-col h-fit m-auto text-center">  
+            <div class="flex justify-center gap-2">
+                <input type="text" placeholder="Enter your url to shorten" class="border p-3"/>
+                <button id="shorten-button" type="button" class="bg-blue-500 hover:bg-blue-900 shadow-xl px-7 py-3 text-white" >Shorten</button>
+            </div>
+
+            <div id="alert-message" class="mt-5">
+                Feedback message
+            </div>
+        </div>
+
+<script>
+            // add event listener to the shorten button
+            var shortenButton = document.querySelector('#shorten-button');
+            if (shortenButton == null) {
+                console.log('shorten button is null');
+            }
+            shortenButton.addEventListener('click', function(){
+                // get the input value
+                console.log('clicked');
+                const url = document.querySelector('input').value;
+                // send the url to the server
+                fetch('http://localhost:8080/shorten', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({url})
+                }).then(response => {
+                    response.json().then(data => {
+                        document.querySelector('#alert-message').innerHTML = data.shortened_url;
+                    });
+                }).catch(error => console.error('Error:', error)).then(response => {
+                    // display the response
+                    document.querySelector('#alert-message').innerHTML = response.message;
+                });
+            });
+            
+        </script>
+        
+    </body>
+</html>
